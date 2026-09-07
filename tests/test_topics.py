@@ -56,6 +56,13 @@ def test_graph_shape_and_routing(graph):
         ("my name is Priya", "remember"),
         ("what's my usual?", "recall"),
         ("lovely weather today", "smalltalk"),
+        # An intent to order that names nothing on the menu still reaches the
+        # order branch, so take_order can ask what they meant.
+        ("Take an order", "order"),
+        ("I want something", "order"),
+        # ...but weak words alone must NOT hijack the turn away from smalltalk.
+        ("thanks so much, please", "smalltalk"),
+        ("add me to the list", "smalltalk"),
     ]
     for i, (text, expected) in enumerate(cases):
         out = chat(graph, text, f"route-{i}")

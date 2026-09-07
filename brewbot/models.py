@@ -60,11 +60,16 @@ class DemoChatModel(BaseChatModel):
         pick = len(last_user) % 2
 
         if task == "order":
+            # No ticket total means nothing was actually added -- they signalled an
+            # intent to order without naming anything on the menu. [CONTEXT] is
+            # phrased as an instruction to a real model, so don't echo it here.
+            if not total:
+                lead = ["Happy to take your order", "Of course"][pick]
+                return f"{lead}{', ' + name if name else ''} -- what can I get you?"
             added = context or "your order"
             opener = ["Perfect", "Lovely"][pick]
             reply = f"{opener}{', ' + name if name else ''} -- {added}"
-            if total:
-                reply += f" Your ticket is now {total}."
+            reply += f" Your ticket is now {total}."
             return reply + " Anything else for you?"
 
         if task == "menu":

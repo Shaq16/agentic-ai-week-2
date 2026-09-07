@@ -68,6 +68,14 @@ _ORDER_RE = re.compile(
     r"\b(can i (?:get|have)|i(?:'| wou)?ld like|i want|give me|make (?:it|me)|order"
     r"|add|grab|take|to go|for here|please)\b"
 )
+# A deliberately NARROWER set for the itemless case. When nothing on the menu was
+# named we still want the order branch (so it can ask what they meant), but only on
+# an unmistakable intent to order -- a bare "please" or "add" is far too weak to
+# hijack the turn away from smalltalk.
+_ORDER_INTENT_RE = re.compile(
+    r"\b(can i (?:get|have)|i(?:'| wou)?ld like|i want|give me|take (?:an|my) order"
+    r"|(?:place|make) an order|order(?:ing)?(?: something| now| please)?)\b"
+)
 
 
 def route_intent(state: BrewState, config: RunnableConfig) -> dict:
@@ -96,6 +104,14 @@ def route_intent(state: BrewState, config: RunnableConfig) -> dict:
         }
     if items:
         return {"intent": "order", "router_note": f"menu items {[i['name'] for i in items]}"}
+
+    # An intent to order with nothing recognisable on it -- e.g. "take an order".
+    # `take_order` handles the empty cart by asking what they actually wanted.
+    if match := _ORDER_INTENT_RE.search(lowered):
+        return {
+            "intent": "order",
+            "router_note": f"ordering phrase {match.group(0)!r} but no menu item named",
+        }
 
     return {"intent": "smalltalk", "router_note": "no rule matched -- falling through"}
 
