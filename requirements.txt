@@ -1,0 +1,10 @@
+# Core
+langgraph>=1.2,<2
+langgraph-checkpoint-sqlite>=3.1
+langchain-core>=1.6,<2
+streamlit>=1.60
+grandalf>=0.8            # needed for graph.get_graph().draw_ascii()
+
+# Optional model providers -- BrewBot runs fully offline without these.
+langchain-google-genai>=4.4
+langchain-openai>=1.0

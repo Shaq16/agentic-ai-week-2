@@ -1,0 +1,18 @@
+# Virtual environment
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Local BrewBot state (checkpointer + long-term store)
+data/*.sqlite
+data/*.sqlite-shm
+data/*.sqlite-wal
+
+# Secrets
+.env
+.streamlit/secrets.toml
+
+# macOS
+.DS_Store
